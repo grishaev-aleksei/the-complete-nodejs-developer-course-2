@@ -4,25 +4,32 @@ const fs = require('fs');
 
 const notesPath = 'notes-data.json';
 
+const fetchNotes = () => {
+    try {
+        const notesString = fs.readFileSync(notesPath);
+        return JSON.parse(notesString.toString());
+    } catch (e) {
+        return []
+    }
+};
+
+const saveNotes = (notes) => {
+    fs.writeFileSync(notesPath, JSON.stringify(notes))
+};
+
 const addNote = (title, body) => {
-    let notes = [];
+    const notes = fetchNotes();
     const note = {
         title,
         body
     };
-    try {
-        const notesString = fs.readFileSync(notesPath);
-        notes = JSON.parse(notesString.toString());
-    } catch (e) {
-
-    }
 
     const duplicateNotes = notes.filter((note) => note.title === title);
 
-
     if (duplicateNotes.length === 0) {
         notes.push(note);
-        fs.writeFileSync(notesPath, JSON.stringify(notes))
+        saveNotes(notes);
+        return note
     }
 
     // if (fs.existsSync(notesPath)) {
@@ -35,7 +42,7 @@ const addNote = (title, body) => {
 };
 
 const getAll = () => {
-    console.log('getAll')
+    console.log(fetchNotes())
 };
 
 const getOne = (title) => {

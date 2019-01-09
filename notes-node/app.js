@@ -13,7 +13,12 @@ const command = process.argv[2];
 // console.log('command: ', command);
 
 if (command === 'add') {
-    notes.addNote(argv.title, argv.body)
+    const note = notes.addNote(argv.title, argv.body);
+    if (note) {
+        console.log('note has not saved');
+    } else {
+        console.log('new note =', note, 'has been saved')
+    }
 } else if (command === 'list') {
     notes.getAll();
 } else if (command === 'read') {
