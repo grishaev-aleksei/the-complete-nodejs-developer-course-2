@@ -34,11 +34,25 @@ const addNote = (title, body) => {
 };
 
 const getAll = () => {
-    console.log(fetchNotes())
+    const notes = fetchNotes();
+    if (notes.length > 0) {
+        notes.forEach((note) => {
+            console.log(note)
+        });
+    } else console.log('empty array')
 };
 
 const getOne = (title) => {
-    console.log('getOne', title)
+    const notes = fetchNotes();
+    const filteredNote = notes.filter((note) => note.title === title);
+    return filteredNote[0];
+    // if (!Array.isArray(notes) || !notes.length) {
+    //     return false
+    // } else {
+    //     const filteredNote = notes.filter((note) => note.title === title);
+    //     if (filteredNote.length > 0) return filteredNote;
+    //     else return false
+    // }
 };
 
 const removeOne = (title) => {

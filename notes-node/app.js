@@ -14,20 +14,37 @@ const command = process.argv[2];
 
 if (command === 'add') {
     const note = notes.addNote(argv.title, argv.body);
-    console.log(note);
     if (_.isNil(note)) {
         console.log('note has not saved');
     } else {
         console.log('new note =', note, 'has been saved')
     }
+
 } else if (command === 'list') {
     notes.getAll();
+
 } else if (command === 'read') {
-    notes.getOne(argv.title)
+    const note = notes.getOne(argv.title);
+    if (note) {
+        notePrint(note.title, note.body)
+    } else {
+        console.log('note not found')
+    }
+    // if (note !== false) {
+    //     console.log('note is', note)
+    // } else console.log('note not found')
+
 } else if (command === 'remove') {
-    const removedNote = notes.removeOne(argv.title);
-    const message = !removedNote ? 'note not found' : `note was deleted`;
-    console.log(message, removedNote)
+    const note = notes.removeOne(argv.title);
+    const message = !note ? 'note not found' : `note was deleted`;
+    console.log(message, note)
+
 } else {
     console.log('invalid command or does not exist')
+}
+
+function notePrint(title, body) {
+    console.log('-----');
+    console.log(`title: ${title}`);
+    console.log(`body: ${body}`);
 }
