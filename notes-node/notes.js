@@ -31,14 +31,6 @@ const addNote = (title, body) => {
         saveNotes(notes);
         return note
     }
-
-    // if (fs.existsSync(notesPath)) {
-    //     const notesString = fs.readFileSync(notesPath);
-    //     if (notesString.length !== 0) {
-    //         notes = JSON.parse(notesString.toString());
-    //     }
-    // }
-
 };
 
 const getAll = () => {
@@ -50,7 +42,19 @@ const getOne = (title) => {
 };
 
 const removeOne = (title) => {
-    console.log('removeOne', title)
+    const notes = fetchNotes();
+    // const filteredNotes = notes.filter((note) => note.title !== title);
+    const noteIndex = notes.findIndex(note => note.title === title);
+    if (noteIndex >= 0) {
+        const noteForRemove = notes[noteIndex];
+        notes.splice(noteIndex, 1);
+        saveNotes(notes);
+        console.log(noteForRemove);
+        return noteForRemove
+    } else {
+        return false
+    }
+
 };
 
 module.exports = {

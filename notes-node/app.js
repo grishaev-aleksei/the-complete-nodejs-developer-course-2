@@ -14,7 +14,8 @@ const command = process.argv[2];
 
 if (command === 'add') {
     const note = notes.addNote(argv.title, argv.body);
-    if (note) {
+    console.log(note);
+    if (_.isNil(note)) {
         console.log('note has not saved');
     } else {
         console.log('new note =', note, 'has been saved')
@@ -24,7 +25,9 @@ if (command === 'add') {
 } else if (command === 'read') {
     notes.getOne(argv.title)
 } else if (command === 'remove') {
-    notes.removeOne(argv.title)
+    const removedNote = notes.removeOne(argv.title);
+    const message = !removedNote ? 'note not found' : `note was deleted`;
+    console.log(message, removedNote)
 } else {
     console.log('invalid command or does not exist')
 }
