@@ -46,13 +46,6 @@ const getOne = (title) => {
     const notes = fetchNotes();
     const filteredNote = notes.filter((note) => note.title === title);
     return filteredNote[0];
-    // if (!Array.isArray(notes) || !notes.length) {
-    //     return false
-    // } else {
-    //     const filteredNote = notes.filter((note) => note.title === title);
-    //     if (filteredNote.length > 0) return filteredNote;
-    //     else return false
-    // }
 };
 
 const removeOne = (title) => {

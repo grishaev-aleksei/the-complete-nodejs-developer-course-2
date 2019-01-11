@@ -14,10 +14,10 @@ const command = process.argv[2];
 
 if (command === 'add') {
     const note = notes.addNote(argv.title, argv.body);
-    if (_.isNil(note)) {
-        console.log('note has not saved');
+    if (note) {
+        notePrint(note.title, note.body)
     } else {
-        console.log('new note =', note, 'has been saved')
+        console.log('note has not saved');
     }
 
 } else if (command === 'list') {
@@ -30,9 +30,6 @@ if (command === 'add') {
     } else {
         console.log('note not found')
     }
-    // if (note !== false) {
-    //     console.log('note is', note)
-    // } else console.log('note not found')
 
 } else if (command === 'remove') {
     const note = notes.removeOne(argv.title);
@@ -44,6 +41,8 @@ if (command === 'add') {
 }
 
 function notePrint(title, body) {
+    console.log('-----');
+    console.log(command);
     console.log('-----');
     console.log(`title: ${title}`);
     console.log(`body: ${body}`);
