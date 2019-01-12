@@ -8,10 +8,6 @@ const notes = require('./notes');
 const argv = yargs.argv;
 const command = process.argv[2];
 
-// console.log('process:', process.argv);
-// console.log('yargs', argv);
-// console.log('command: ', command);
-
 if (command === 'add') {
     const note = notes.addNote(argv.title, argv.body);
     if (note) {
