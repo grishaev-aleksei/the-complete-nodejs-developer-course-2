@@ -7,5 +7,5 @@ person.age = 25;
 // repl - view variables
 debugger;
 person.name = 'Mike';
-
+debugger;
 console.log(person);
