@@ -1,5 +1,3 @@
-console.log('starting notes.js');
-
 const fs = require('fs');
 
 const notesPath = 'notes-data.json';
@@ -34,12 +32,7 @@ const addNote = (title, body) => {
 };
 
 const getAll = () => {
-    const notes = fetchNotes();
-    if (notes.length > 0) {
-        notes.forEach((note) => {
-            console.log(note)
-        });
-    } else console.log('empty array')
+    return fetchNotes();
 };
 
 const getOne = (title) => {
@@ -64,10 +57,17 @@ const removeOne = (title) => {
 
 };
 
+function notePrint(note) {
+    console.log('-----');
+    console.log('the title is', note.title);
+    console.log('the body is', note.body);
+}
+
 module.exports = {
     addNote,
     getAll,
     getOne,
-    removeOne
+    removeOne,
+    notePrint
 };
 
