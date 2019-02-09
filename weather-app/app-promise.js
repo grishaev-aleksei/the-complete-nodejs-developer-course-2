@@ -11,12 +11,12 @@ const argv = yargs
             describe: 'address to fetch weather for in en',
             string: true
         }, gkey: {
-            // demand: true,
+            demand: true,
             describe: 'geocode api key ' +
                 'https://developer.tech.yandex.ru/keys/',
             string: true
         }, wkey: {
-            // demand: true,
+            demand: true,
             describe: 'weather api key ' +
                 'https://developer.tech.yandex.ru/keys/',
             string: true
@@ -26,12 +26,21 @@ const argv = yargs
     .alias('h', 'help')
     .argv;
 
-const address = argv.a.replace(/\s/g, '+');
+function addressFn() {
+    if (argv.a) {
+        return argv.a.replace(/\s/g, '+');
+    } else {
+        return 'poselok tolstopaltsevo'
+    }
+}
+
+const address = addressFn();
 const geocodeApiKey = argv.gkey;
 const weatherApiKey = argv.wkey;
 
 geocode.geocodeAddress(address, geocodeApiKey)
     .then((result) => {
+        console.log(result.address);
         weather.getWeather(weatherApiKey, result)
             .then((result) => {
                 console.log(result)
