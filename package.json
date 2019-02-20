@@ -2,7 +2,7 @@
   "name": "the-complete-nodejs-developer-course-2",
   "version": "1.0.0",
   "description": "",
-  "main": "./notes-node/app.js",
+  "main": "",
   "scripts": {
     "start": "cd node-web-server && node server.js"
   },
