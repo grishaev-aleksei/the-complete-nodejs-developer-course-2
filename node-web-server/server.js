@@ -21,10 +21,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.use((req, res, next) => {
-//     res.render('maintenance')
-// });
-
+app.use('/projects', (req, res, next) => {
+    res.render('projects')
+});
 
 app.get('/', (req, res) => {
     res.render('home', {
