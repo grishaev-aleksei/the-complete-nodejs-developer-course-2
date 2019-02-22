@@ -8,7 +8,7 @@ it('should add two numbers', function () {
     }
 });
 
-it('should square number', function (done) {
+it('should square number', function () {
     const res = utils.square(3);
     if (res !== 9) {
         throw new Error(`expected 9 but returned ${res}`)
