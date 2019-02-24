@@ -9,7 +9,6 @@ const asyncAdd = (a, b) => {
 };
 
 
-
 asyncAdd('3', 6)
     .then((result) => {
         console.log(result);
