@@ -1,25 +1,28 @@
 const utils = require('./utils');
-const describe = require('mocha').describe;
 const assert = require('chai').assert;
 
+
 describe('this', () => {
-    it('should add two numbers', function () {
-        const result = utils.add(33, 11);
-        assert.equal(result, 44);
-        assert.isNumber(result);
 
-    });
 
-    it('should async add two numbers', function (done) {
-        utils.promiseAdd(3, 4)
-            .then((sum) => {
-                assert.equal(sum, 7);
-                done()
-            })
-            .catch((e) => {
-                done(e)
-            })
-    });
+        it('should add two numbers', function () {
+            const result = utils.add(33, 11);
+            assert.equal(result, 44);
+            assert.isNumber(result);
+
+        });
+
+        it('should async add two numbers', function (done) {
+            utils.promiseAdd(3, 4)
+                .then((sum) => {
+                    assert.equal(sum, 7);
+                    done()
+                })
+                .catch((e) => {
+                    done(e)
+                })
+        });
+
 
     it('should square number', function () {
         const result = utils.square(3);
@@ -48,6 +51,7 @@ describe('this', () => {
         assert.include(user, {lastName: 'Mead'}, 'last name comes last')
     });
 
+
 // it('should expect some values', function () {
 //     assert.equal(12, 12);
 //     obj = {
@@ -57,6 +61,5 @@ describe('this', () => {
 //     assert.include([1,2,3], 66, 'array contains value');
 //     assert.notDeepInclude()
 // });
-})
-;
+});
 
