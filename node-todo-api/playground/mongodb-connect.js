@@ -39,7 +39,7 @@ MongoClient.connect(url, {useNewUrlParser: true}, function (err, client) {
 
     const db = client.db(dbName);
 
-    db.collection('Todos').insertOne(newToDo)
+    db.collection('Users').insertOne(user)
         .then(res => console.log(JSON.stringify(res.ops)))
         .catch(err => console.log(err));
 
