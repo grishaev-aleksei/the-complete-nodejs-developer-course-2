@@ -17,23 +17,18 @@ MongoClient.connect(url, {useNewUrlParser: true}, function (err, client) {
 
     const db = client.db(dbName);
 
-    db.collection('Users').find().toArray()
+    db.collection('Users').findOneAndDelete({_id: new ObjectID('5c7c092c6749eb042a8aa7f6')})
         .then(res => console.log('good', res))
         .catch(err => console.log('bad', err));
 
-    // db.collection('Users').find({Name: 'Mike'}).toArray()
+    db.collection('Users').deleteMany({Name: 'Andrew'})
+        .then(res => console.log('good', res))
+        .catch(err => console.log('bad', err));
+    //
+    // db.collection('Todos').deleteOne({text: 'Eat lunch'})
     //     .then(res => console.log('good', res))
     //     .catch(err => console.log('bad', err));
 
-    // db.collection('Todos').find({
-    //     _id: new ObjectID('5c821abad142cc9ec5661a6d')
-    // }).toArray()
-    //     .then(res => console.log('success:', (res)))
-    //     .catch(err => console.log('error:', err));
-
-    // db.collection('Todos').find().count()
-    //     .then(res => console.log('success:', (res)))
-    //     .catch(err => console.log('error:', err));
 
     client.close();
 });

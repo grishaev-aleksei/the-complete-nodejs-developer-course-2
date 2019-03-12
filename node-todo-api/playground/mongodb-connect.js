@@ -14,6 +14,11 @@ const user = {
     sex: 'very'
 };
 
+const newToDo = {
+    text: 'Eat lunch',
+    completed: false
+};
+
 const {sex} = user;
 
 console.log(sex);
@@ -34,9 +39,13 @@ MongoClient.connect(url, {useNewUrlParser: true}, function (err, client) {
 
     const db = client.db(dbName);
 
+    db.collection('Todos').insertOne(newToDo)
+        .then(res => console.log(JSON.stringify(res.ops)))
+        .catch(err => console.log(err));
+
     // db.collection('Todos').insertOne({
     //     text: 'Something to do',
-    //     completed: false
+    //     completed: falseR
     // }, (err, res) => {
     //     if (err) {
     //         return console.log('Unable to insert todo', err)
