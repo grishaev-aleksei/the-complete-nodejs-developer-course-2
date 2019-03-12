@@ -1,53 +1,30 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-const url = 'mongodb://localhost:27017/Todo-app';
+const {mongoose} = require('./db/mongoose');
+const {Todo} = require('./models/todo');
+const {User} = require('./models/user');
 
-mongoose.connect(url, {useNewUrlParser: true})
-    .then(res => console.log('successfully connected'))
-    .catch(err => console.log('err', err));
+const app = express();
 
-// const Todo = mongoose.model('Todo', {
-//     text: {
-//         type: String,
-//         required: true,
-//         minlength: 4,
-//         trim: true
-//     },
-//     completed: {
-//         type: Boolean,
-//         default: false
-//     },
-//     completedAt: {
-//         type: Number,
-//         default: null
-//     }
-// });
-//
-// new Todo({
-//     text: false
-// }).save()
-//     .then(res => console.log('successfully saved', res))
-//     .catch(err => console.log('there was an error', err));
+app.use(bodyParser.json());
 
-const User = mongoose.model('User', {
-    email: {
-        type: String,
-        required: true,
-        minlength: 1,
-        trim: true
-    },
+app.post('/todos', (req, res) => {
+    const todo = new Todo(req.body);
+
+    todo.save()
+        .then(result => {
+            res.status(200).send(result)
+        })
+        .catch(err => res.status(400).send(err));
+
+    console.log(req.body);
+    // res.send('ololo')
 });
 
-new User({
-    email: '  Mom   '
-}).save()
-    .then(res => {
-        console.log('successfully added user',res);
-        mongoose.disconnect()
-            .then(res => console.log('disconnected'))
-            .catch(err => console.log('error on disconnect'));
-    })
-    .catch(err => console.log('error on adding user',err));
+app.listen(3000, () => {
+    console.log('started on port = 3000')
+});
 
 
 
