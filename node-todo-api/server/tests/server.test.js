@@ -5,14 +5,24 @@ const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 const {User} = require('./../models/user');
 
+
+const todos = [{
+    text: 'First test todo'
+}, {
+    text: 'Second test todo'
+}];
+
+beforeEach('prepare database', function (done) {
+    Todo.deleteMany({})
+        .then(() => {
+            return Todo.insertMany(todos)
+        }).then(done())
+
+});
+
 //todo mock database call
 describe('POST /todos', () => {
 
-    beforeEach('prepare database', function (done) {
-        Todo.deleteMany({})
-            .then(done())
-
-    });
 
     it('should create a new todo', function (done) {
 
@@ -29,7 +39,7 @@ describe('POST /todos', () => {
             .end((err, res) => {
                 if (err) return done(err);
 
-                Todo.find()
+                Todo.find({text})
                     .then(todos => {
                         assert.equal(todos.length, 1);
                         assert.deepEqual(todos[0].text, text);
@@ -51,7 +61,7 @@ describe('POST /todos', () => {
 
                 Todo.find()
                     .then(todos => {
-                        assert.equal(todos.length, 0);
+                        assert.equal(todos.length, 2);
                         done()
                     })
                     .catch(err => done(err))
@@ -60,4 +70,18 @@ describe('POST /todos', () => {
 
     });
 
+
+});
+describe('GET /todos', function () {
+
+    it('should get all todos', function (done) {
+        request(app)
+            .get('/todos')
+            .expect(200)
+            .expect((res) => {
+                assert.equal(res.body.todos.length, 2)
+            })
+            .end(done)
+
+    });
 });
