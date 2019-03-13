@@ -17,14 +17,13 @@ app.post('/todos', (req, res) => {
             res.status(200).send(result)
         })
         .catch(err => res.status(400).send(err));
-
-    console.log(req.body);
-    // res.send('ololo')
 });
 
 app.listen(3000, () => {
     console.log('started on port = 3000')
 });
+
+module.exports = {app};
 
 
 

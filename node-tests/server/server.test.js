@@ -1,7 +1,7 @@
 const request = require('supertest');
-const assert = require('chai').assert;
+const {assert} = require('chai');
 
-const app = require('./server').app;
+const {app} = require('./server');
 
 
 describe('server', () => {
