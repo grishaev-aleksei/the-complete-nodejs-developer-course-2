@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const {mongoose} = require('./db/mongoose');
-const {Todo} = require('./models/todo');
+const {todo} = require('./models/todo');
 const {User} = require('./models/user');
 
 const app = express();
@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 
 app.post('/todos', (req, res) => {
-    const todo = new Todo(req.body);
+    const todo = new todo(req.body);
 
     todo.save()
         .then(result => {
@@ -23,7 +23,7 @@ app.post('/todos', (req, res) => {
 });
 
 app.get('/todos', (req, res) => {
-    Todo.find()
+    todo.find()
         .then((todos) => {
             res.send({todos})
         })
