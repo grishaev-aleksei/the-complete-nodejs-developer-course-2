@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
+const _ = require('lodash');
 
 const {mongoose} = require('./db/mongoose');
 const {todo} = require('./models/todo');
@@ -27,7 +28,7 @@ app.get('/todos', (req, res) => {
         .then((todos) => {
             res.send({todos})
         })
-        .catch(err => res.status(400).send(err))
+        .catch(err => res.status(400).json(err))
 });
 
 app.get('/todos/:id', (req, res) => {
@@ -42,7 +43,7 @@ app.get('/todos/:id', (req, res) => {
             }
             res.status(200).json(todo)
         })
-        .catch(err => res.status(400).json({error: err}))
+        .catch(err => res.status(400).json(err))
 });
 
 app.delete('/todos/:id', (req, res) => {
@@ -57,7 +58,34 @@ app.delete('/todos/:id', (req, res) => {
             }
             res.status(200).json(todo)
         })
-        .catch(err => res.status(400).json({error: err}))
+        .catch(err => res.status(400).json(err))
+});
+
+app.patch('/todos/:id', (req, res) => {
+    const todoId = req.params.id;
+    const body = _.pick(req.body, ['text', 'completed']);
+
+    if (!ObjectID.isValid(todoId)) {
+        return res.status(400).json({error: 'invalid ID'})
+    }
+
+    if (_.isBoolean(body.completed) && body.completed) {
+        body.completedAt = new Date().getTime()
+    } else {
+        body.completed = false;
+        body.completedAt = null
+    }
+
+    todo.findOneAndUpdate(todoId, {
+        $set: body
+    }, {new: true})
+        .then(todo => {
+            if (!todo) {
+                return res.status(404).json({error: 'todo not found'})
+            }
+            res.status(200).json(todo)
+        })
+        .catch(err => res.status(400).json(err))
 });
 
 app.get('/users', (req, res) => {
