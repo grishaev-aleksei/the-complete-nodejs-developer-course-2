@@ -12,6 +12,10 @@ mongoose.connect(url(), {useNewUrlParser: true})
     .then(res => console.log('successfully connected'))
     .catch(err => console.log('err', err));
 
+mongoose.connection.on('disconnected', function(){
+    console.log(("Mongoose default connection is disconnected"));
+});
+
 
 module.exports = {
     mongoose
