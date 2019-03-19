@@ -45,7 +45,8 @@ describe('root', () => {
                 .expect(200)
                 .expect((res) => {
                     assert.isOk(res.body);
-                    assert.deepEqual(res.body.text, text)
+                    assert.deepEqual(res.body.text, text);
+
                 })
                 .end((err, res) => {
                     if (err) return done(err);
@@ -86,7 +87,6 @@ describe('root', () => {
     describe('GET /todos', function () {
 
 
-
         it('should get all todos', function (done) {
             request(app)
                 .get('/todos')
@@ -100,14 +100,14 @@ describe('root', () => {
 
     });
 
-    describe('GET /todos/:id', ()=>{
+    describe('GET /todos/:id', () => {
 
         it('should return todo doc', function (done) {
 
             request(app)
                 .get(`/todos/${todos[0]._id.toString()}`)
                 .expect(200)
-                .expect((res)=>{
+                .expect((res) => {
                     assert.equal(res.body.text, todos[0].text)
                 })
                 .end(done)
@@ -127,6 +127,46 @@ describe('root', () => {
 
             request(app)
                 .get(`/todos/${'some invalid ID'}`)
+                .expect(400)
+                .end(done)
+        });
+    });
+
+    describe('DELETE /todos/:id', () => {
+
+        it('should remove a todo', function (done) {
+
+            const todoID = todos[1]._id.toString();
+
+            request(app)
+                .delete(`/todos/${todoID}`)
+                .expect(200)
+                .expect(res => {
+                    assert.equal(res.body.text, todos[1].text)
+                })
+                .end((err, res) => {
+                    if (err) done(err);
+                    todo.findById(todoID)
+                        .then(todos => {
+                            assert.isNull(todos);
+                            done()
+                        })
+                })
+        });
+
+        it('should return 404 if todo not found', function (done) {
+
+            request(app)
+                .delete(`/todos/${new ObjectID()}`)
+                .expect(404)
+                .end(done)
+
+        });
+
+        it('should return 400 if ID is invalid', function (done) {
+
+            request(app)
+                .delete(`/todos/${'looks like invalid ID'}`)
                 .expect(400)
                 .end(done)
         });

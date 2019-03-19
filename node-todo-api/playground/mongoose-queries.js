@@ -34,3 +34,13 @@ user.findById(userId)
         console.log(user)
     })
     .catch(err => console.log(err));
+
+
+user.find({})
+    .then(user => {
+        if (!user) {
+            return console.log('404, not found')
+        }
+        console.log(user)
+    })
+    .catch(err => console.log(err));
