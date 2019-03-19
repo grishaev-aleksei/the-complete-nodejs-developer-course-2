@@ -17,7 +17,7 @@ app.post('/todos', (req, res) => {
     new todo(req.body)
         .save()
         .then(result => {
-            res.status(200).send(result)
+            res.status(200).json({inserted: result})
         })
         .catch(err => res.status(400).send(err));
 });
@@ -38,9 +38,24 @@ app.get('/todos/:id', (req, res) => {
     todo.findById(todoId)
         .then(todo => {
             if (!todo) {
-                return res.status(404).json({error: 'user not found'})
+                return res.status(404).json({error: 'todo not found'})
             }
             res.status(200).json(todo)
+        })
+        .catch(err => res.status(400).json({error: err}))
+});
+
+app.delete('/todos/:id', (req, res) => {
+    const todoId = req.params.id;
+    if (!ObjectID.isValid(todoId)) {
+        return res.status(400).json({error: 'invalid ID'})
+    }
+    todo.findByIdAndDelete(todoId)
+        .then(todo => {
+            if (!todo) {
+                return res.status(404).json({error: 'todo not found'})
+            }
+            res.status(200).json({deleted: todo})
         })
         .catch(err => res.status(400).json({error: err}))
 });
@@ -67,6 +82,7 @@ app.get('/users/:id', (req, res) => {
         })
         .catch(err => res.status(400).json({error: err}))
 });
+
 
 app.listen(3000, () => {
     console.log('started on port = 3000')
