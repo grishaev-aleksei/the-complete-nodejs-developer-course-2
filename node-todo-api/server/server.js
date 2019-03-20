@@ -1,6 +1,6 @@
 require('./../config/config');
 
-console.log(process.env.MOBGODB_URI);
+console.log('process.env.PORT',process.env.PORT);
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -115,7 +115,7 @@ app.get('/users/:id', (req, res) => {
 
 
 app.listen(process.env.PORT, () => {
-    console.log('started on port = 3000')
+    console.log(`application started on port === ${process.env.PORT}`)
 });
 
 module.exports = {app};
