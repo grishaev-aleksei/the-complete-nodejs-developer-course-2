@@ -21,7 +21,9 @@ describe('root', () => {
         text: 'First test todo'
     }, {
         _id: new ObjectID(),
-        text: 'Second test todo'
+        text: 'Second test todo',
+        completed: true,
+        completedAt: 333
     }];
 
     beforeEach('prepare database', function (done) {
@@ -170,6 +172,67 @@ describe('root', () => {
                 .expect(400)
                 .end(done)
         });
-    })
+    });
 
+    describe('PATCH /todos/:id', () => {
+
+        it('should update the todo', function (done) {
+
+            const todoID = todos[0]._id.toString();
+
+            const data = {
+                text: 'this is a new text',
+                completed: true
+            };
+
+            request(app)
+                .patch(`/todos/${todoID}`)
+                .send(data)
+                .expect(200)
+                .expect(res => {
+                    assert.equal(res.body.text, data.text)
+                })
+                .end((err, res) => {
+                    if (err) return done(err);
+
+                    todo.findById(todoID)
+                        .then(todo => {
+                            assert.isOk(todo.completed);
+                            assert.isNotNull(todo.completedAt);
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+
+        });
+
+        it('should clear completedAt when todo is not completed', function (done) {
+
+            const todoID = todos[1]._id.toString();
+
+            const data = {
+                completed: false
+            };
+
+            request(app)
+                .patch(`/todos/${todoID}`)
+                .send(data)
+                .expect(200)
+                .expect(res => {
+                    assert.isNotOk(res.body.completed);
+                    assert.isNull(res.body.completedAt)
+                })
+                .end((err, res) => {
+                    if (err) return done(err);
+
+                    todo.findById(todoID)
+                        .then(todo => {
+                            assert.isNotOk(todo.completed);
+                            assert.isNull(todo.completedAt);
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+        });
+    })
 });
