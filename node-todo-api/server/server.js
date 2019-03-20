@@ -1,5 +1,7 @@
 require('./../config/config');
 
+console.log(process.env.MOBGODB_URI);
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
@@ -12,7 +14,6 @@ const {user} = require('./models/user');
 const app = express();
 
 app.use(bodyParser.json());
-
 
 app.post('/todos', (req, res) => {
     new todo(req.body)

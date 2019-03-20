@@ -15,5 +15,6 @@ if (env() === "development") {
     process.env.MONGODB_URI = 'mongodb://localhost:27017/Todo-app-test';
 } else if (env() === 'production') {
     process.env.MOBGODB_URI =
+        // `mongodb+srv://${process.env.PORT}:${process.env.NODE_ENV}@cluster0-8jidn.mongodb.net/test?retryWrites=true`
         `mongodb+srv://${process.env.ATLAS_DB_LOGIN}:${process.env.ATLAS_DB_PASS}@cluster0-8jidn.mongodb.net/test?retryWrites=true`
 }
