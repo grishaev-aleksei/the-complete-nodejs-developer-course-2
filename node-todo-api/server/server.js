@@ -1,3 +1,5 @@
+require('./../config/config');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
@@ -10,8 +12,6 @@ const {user} = require('./models/user');
 const app = express();
 
 app.use(bodyParser.json());
-
-//todo 77-79 series 
 
 
 app.post('/todos', (req, res) => {
@@ -113,7 +113,7 @@ app.get('/users/:id', (req, res) => {
 });
 
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
     console.log('started on port = 3000')
 });
 

@@ -8,7 +8,7 @@ const url = () =>{
 };
 
 
-mongoose.connect(url(), {useNewUrlParser: true})
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true})
     .then(res => console.log('successfully connected'))
     .catch(err => console.log('err', err));
 
