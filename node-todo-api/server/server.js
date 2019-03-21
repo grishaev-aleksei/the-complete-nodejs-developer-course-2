@@ -1,7 +1,5 @@
 require('./../config/config');
 
-console.log('process.env.PORT',process.env.PORT);
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
@@ -88,6 +86,18 @@ app.patch('/todos/:id', (req, res) => {
             res.status(200).json(todo)
         })
         .catch(err => res.status(400).json(err))
+});
+
+app.post('/users', (req, res) => {
+
+    const body = _.pick(req.body, ['email', 'password']);
+
+    new user(body)
+        .save()
+        .then(result => {
+            res.status(200).json(result)
+        })
+        .catch(err => res.status(400).send(err));
 });
 
 app.get('/users', (req, res) => {
