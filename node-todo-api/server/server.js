@@ -8,6 +8,7 @@ const _ = require('lodash');
 const {mongoose} = require('./db/mongoose');
 const {todo} = require('./models/todo');
 const {user} = require('./models/user');
+const {authenticate} = require('./middleware/authenticate');
 
 const app = express();
 
@@ -112,19 +113,25 @@ app.get('/users', (req, res) => {
         .catch(err => res.status(400).json(err));
 });
 
-app.get('/users/:id', (req, res) => {
-    const id = req.params.id;
-    if (!ObjectID.isValid(id)) {
-        return res.status(400).json({error: 'invalid ID'})
-    }
-    user.findById(id)
-        .then(user => {
-            if (!user) {
-                return res.status(404).json({error: 'user not found'})
-            }
-            res.status(200).json(user)
-        })
-        .catch(err => res.status(400).json({error: err}))
+// app.get('/users/:id', (req, res) => {
+//     const id = req.params.id;
+//     if (!ObjectID.isValid(id)) {
+//         return res.status(400).json({error: 'invalid ID'})
+//     }
+//     user.findById(id)
+//         .then(user => {
+//             if (!user) {
+//                 return res.status(404).json({error: 'user not found'})
+//             }
+//             res.status(200).json(user)
+//         })
+//         .catch(err => res.status(400).json({error: err}))
+// });
+
+
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user)
 });
 
 
