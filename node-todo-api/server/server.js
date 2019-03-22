@@ -92,10 +92,14 @@ app.post('/users', (req, res) => {
 
     const body = _.pick(req.body, ['email', 'password']);
 
-    new user(body)
-        .save()
-        .then(result => {
-            res.status(200).json(result)
+    const thisUser = new user(body);
+
+    thisUser.save()
+        .then((azaz) => {
+            return thisUser.generateAuthToken()
+        })
+        .then(token => {
+            res.header('x-auth', token).send(thisUser)
         })
         .catch(err => res.status(400).send(err));
 });
@@ -105,7 +109,7 @@ app.get('/users', (req, res) => {
         .then(users => {
             res.send({users})
         })
-        .catch(err => res.status(400).json({error: err}));
+        .catch(err => res.status(400).json(err));
 });
 
 app.get('/users/:id', (req, res) => {

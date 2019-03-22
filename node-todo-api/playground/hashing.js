@@ -9,11 +9,11 @@ const data = {
     id:10
 };
 
-const token = jwt.sign(data, 'abc123');
+const token = jwt.sign(data, 'abc123').toString();
 
 const decoded = jwt.verify(token, 'abc123');
 
-console.log(decoded);
+console.log(token);
 
 
 
