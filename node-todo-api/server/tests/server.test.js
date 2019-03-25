@@ -6,6 +6,8 @@ const {app} = require('./../server');
 const {todo} = require('./../models/todo');
 const {user} = require('./../models/user');
 
+const {todos, populateTodos, populateUsers, users} = require('./seed/seed');
+
 
 describe('root', () => {
 
@@ -16,23 +18,8 @@ describe('root', () => {
     });
 
 
-    const todos = [{
-        _id: new ObjectID(),
-        text: 'First test todo'
-    }, {
-        _id: new ObjectID(),
-        text: 'Second test todo',
-        completed: true,
-        completedAt: 333
-    }];
-
-    beforeEach('prepare database', function (done) {
-        todo.deleteMany({})
-            .then(() => {
-                return todo.insertMany(todos)
-            }).then(done())
-
-    });
+    beforeEach('populateUsers', populateUsers);
+    beforeEach('populateTodos', populateTodos);
 
     describe('POST /todos', () => {
 
