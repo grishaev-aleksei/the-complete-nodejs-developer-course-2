@@ -4,6 +4,7 @@ const options = {
     useNewUrlParser: true,
     reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
     reconnectInterval: 5000,
+    useCreateIndex: true,
 };
 
 

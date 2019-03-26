@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'test';
+
 const request = require('supertest');
 const {assert} = require('chai');
 const {ObjectID} = require('mongodb');
@@ -18,7 +20,7 @@ describe('root', () => {
     });
 
 
-    beforeEach('populateUsers', populateUsers);
+    before('populateUsers', populateUsers);
     beforeEach('populateTodos', populateTodos);
 
     describe('POST /todos', () => {
@@ -164,7 +166,6 @@ describe('root', () => {
     describe('PATCH /todos/:id', () => {
 
         it('should update the todo', function (done) {
-
             const todoID = todos[0]._id.toString();
 
             const data = {
@@ -194,7 +195,6 @@ describe('root', () => {
         });
 
         it('should clear completedAt when todo is not completed', function (done) {
-
             const todoID = todos[1]._id.toString();
 
             const data = {
@@ -220,6 +220,87 @@ describe('root', () => {
                         })
                         .catch(err => done(err))
                 })
+        });
+    });
+
+    describe('GET /users/me', () => {
+
+        it('should return user if authenticated', function (done) {
+
+            request(app)
+                .get('/users/me')
+                .set('x-auth', users[0].tokens[0].token)
+                .expect(200)
+                .expect((res) => {
+                    assert.equal(res.body._id, users[0]._id);
+                    assert.equal(res.body.email, users[0].email)
+                })
+                .end(done)
+        });
+
+        it('should return 401 if not authenticated', function (done) {
+
+            request(app)
+                .get('/users/me')
+                .expect(401)
+                .expect(res => {
+                    assert.isEmpty(res.body)
+                })
+                .end(done);
+
+        });
+    });
+
+    describe('POST /users', () => {
+
+        it('should create a user', function (done) {
+
+            const email = 'example@example.com';
+            const password = '123mnb!';
+
+            request(app)
+                .post('/users')
+                .send({email, password})
+                .expect(200)
+                .expect(res => {
+                    assert.exists(res.headers['x-auth']);
+                    assert.exists(res.body._id);
+                    assert.equal(res.body.email, email)
+                })
+                .end(err => {
+                    if (err) return done(err);
+                    user.findOne({email})
+                        .then(user => {
+                            assert.exists(user);
+                            assert.notEqual(user.password, password);
+                            done()
+                        })
+                })
+
+        });
+
+        it('should return error if request invalid', function (done) {
+
+            const email = '';
+            const password = '123mnb!';
+
+            request(app)
+                .post('/users')
+                .send({email, password})
+                .expect(400)
+                .end(done)
+
+        });
+
+        it('should not create user if email already used', function (done) {
+            const email = users[0].email;
+            const password = '123mnb!';
+
+            request(app)
+                .post('/users')
+                .send({email, password})
+                .expect(400)
+                .end(done)
         });
     })
 });

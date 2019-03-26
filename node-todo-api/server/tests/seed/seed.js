@@ -1,6 +1,8 @@
 const {ObjectID} = require('mongodb');
 const jwt = require('jsonwebtoken');
 
+const {app} = require('./../../server');
+
 const {todo} = require('./../../models/todo');
 const {user} = require('./../../models/user');
 
@@ -9,7 +11,7 @@ const userOneId = new ObjectID();
 const userTwoId = new ObjectID();
 
 const todos = [{
-    _id: userOneId,
+    _id: new ObjectID(),
     text: 'First test todo'
 }, {
     _id: new ObjectID(),
@@ -19,12 +21,12 @@ const todos = [{
 }];
 
 const users = [{
-    _id: new ObjectID,
+    _id: userOneId,
     email: 'andrew@example.com',
     password: 'userOnePass',
     tokens: [{
         access: 'auth',
-        token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc123').toString()
+        token: jwt.sign({_id: userOneId.toString(), access: 'auth'}, 'abc123').toString()
 
     }]
 }, {
@@ -34,7 +36,7 @@ const users = [{
 }];
 
 const populateUsers = (done) => {
-    user.remove({})
+    user.deleteMany({})
         .then(() => {
             const userOne = new user(users[0]).save();
             const userTwo = new user(users[1]).save();
@@ -51,6 +53,7 @@ const populateTodos = (done) => {
             return todo.insertMany(todos)
         }).then(done())
 };
+
 
 
 module.exports = {
