@@ -35,11 +35,11 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
-userSchema.methods.toJSON = function(){
+userSchema.methods.toJSON = function () {
     const user = this;
     const userObject = user.toObject();
 
-    return _.pick(userObject, ['_id','email'])
+    return _.pick(userObject, ['_id', 'email'])
 };
 
 userSchema.methods.generateAuthToken = function () {
@@ -47,7 +47,6 @@ userSchema.methods.generateAuthToken = function () {
     const access = 'auth';
     const token = jwt.sign({_id: user._id.toString(), access}, 'abc123').toString();
 
-    // user.tokens.push({access, token});
     user.tokens = user.tokens.concat([{access, token}]);
     return user.save()
         .then(() => {
@@ -71,11 +70,30 @@ userSchema.statics.findByToken = function (token) {
     })
 };
 
+userSchema.statics.findByCredentials = function (email, password) {
+    const user = this;
+
+    return user.findOne({email})
+        .then(resUser => {
+            if (!resUser) return Promise.reject('user not found');
+            return new Promise((resolve, reject) => {
+                bcrypt.compare(password, resUser.password, (err, success) => {
+                    if (err || !success) reject('bad password');
+                    else resolve(resUser);
+                })
+            })
+        })
+        .catch(err => {
+            throw err
+        })
+
+};
+
 userSchema.pre('save', function (next) {
     const user = this;
 
-    if (user.isModified('password')){
-        bcrypt.hash(user.password, 10, function(err, hash) {
+    if (user.isModified('password')) {
+        bcrypt.hash(user.password, 10, function (err, hash) {
             user.password = hash;
             next()
             // Store hash in your password DB.
