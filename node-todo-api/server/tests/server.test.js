@@ -39,7 +39,7 @@ describe('root', () => {
                     assert.deepEqual(res.body.text, text);
 
                 })
-                .end((err, res) => {
+                .end((err) => {
                     if (err) return done(err);
 
                     todo.find({text})
@@ -59,7 +59,7 @@ describe('root', () => {
                 .post('/todos')
                 .send({})
                 .expect(400)
-                .end((err, res) => {
+                .end((err) => {
                     if (err) return done(err);
 
                     todo.find()
@@ -135,7 +135,7 @@ describe('root', () => {
                 .expect(res => {
                     assert.equal(res.body.text, todos[1].text)
                 })
-                .end((err, res) => {
+                .end((err) => {
                     if (err) done(err);
                     todo.findById(todoID)
                         .then(todos => {
@@ -180,7 +180,7 @@ describe('root', () => {
                 .expect(res => {
                     assert.equal(res.body.text, data.text)
                 })
-                .end((err, res) => {
+                .end((err) => {
                     if (err) return done(err);
 
                     todo.findById(todoID)
@@ -209,7 +209,7 @@ describe('root', () => {
                     assert.isNotOk(res.body.completed);
                     assert.isNull(res.body.completedAt)
                 })
-                .end((err, res) => {
+                .end((err) => {
                     if (err) return done(err);
 
                     todo.findById(todoID)
@@ -301,6 +301,61 @@ describe('root', () => {
                 .send({email, password})
                 .expect(400)
                 .end(done)
+        });
+    });
+
+    describe('POST /users/login', () => {
+
+        it('should login user and return auth token', function (done) {
+
+            request(app)
+                .post('/users/login')
+                .send({
+                    email: users[1].email,
+                    password: users[1].password
+                })
+                .expect(200)
+                .expect(res => {
+                    assert.equal(res.body.email, users[1].email);
+                    assert.exists(res.headers['x-auth']);
+                })
+                .end((err, res) => {
+                    if (err) return done(err);
+                    user.findById(users[1]._id)
+                        .then(user => {
+                            assert.include(user.tokens[0], {
+                                access: 'auth',
+                                token: res.headers['x-auth']
+                            });
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+
+        });
+
+        it('should reject invalid login', function (done) {
+
+            request(app)
+                .post('/users/login')
+                .send({
+                    email: users[1].email,
+                    password: 'this invalid password'
+                })
+                .expect(400)
+                .expect(res => {
+                    assert.notExists(res.headers['x-auth']);
+                })
+                .end((err) => {
+                    if (err) return done(err);
+                    user.findById(users[1]._id)
+                        .then(user => {
+                            assert.isUndefined(user.tokens[1]);
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+
         });
     })
 });
