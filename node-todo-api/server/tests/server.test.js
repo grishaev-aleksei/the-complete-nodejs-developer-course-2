@@ -322,8 +322,8 @@ describe('root', () => {
                 .end((err, res) => {
                     if (err) return done(err);
                     user.findById(users[1]._id)
-                        .then(user => {
-                            assert.include(user.tokens[0], {
+                        .then(resUser => {
+                            assert.include(resUser.tokens[0], {
                                 access: 'auth',
                                 token: res.headers['x-auth']
                             });
@@ -349,13 +349,34 @@ describe('root', () => {
                 .end((err) => {
                     if (err) return done(err);
                     user.findById(users[1]._id)
-                        .then(user => {
-                            assert.isUndefined(user.tokens[1]);
+                        .then(resUser => {
+                            assert.isUndefined(resUser.tokens[1]);
                             done()
                         })
                         .catch(err => done(err))
                 })
 
         });
+    });
+
+    describe('DELETE /users/me/token', () => {
+
+        it('should remove auth token on logout', function (done) {
+            // this.skip();
+            request(app)
+                .delete('/users/me/token')
+                .set('x-auth', users[0].tokens[0].token)
+                .expect(200)
+                .end((err, res) => {
+                    if (err) return done(err);
+                    user.findById(users[0]._id)
+                        .then(resUser => {
+                            assert.equal(resUser.tokens.length, 0);
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+        });
     })
 });
+
