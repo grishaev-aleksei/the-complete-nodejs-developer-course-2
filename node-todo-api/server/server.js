@@ -4,7 +4,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 const _ = require('lodash');
-const bcrypt = require('bcryptjs');
 
 const {mongoose} = require('./db/mongoose');
 const {todo} = require('./models/todo');
@@ -135,6 +134,15 @@ app.get('/users/me', authenticate, (req, res) => {
     res.send(req.user)
 });
 
+app.delete('/users/me/token', authenticate, (req, res) => {
+    req.user.removeToken(req.token)
+        .then(() => {
+            res.status(200).end()
+        })
+        .catch(() => {
+            res.status(400).end()
+        })
+});
 
 app.listen(process.env.PORT, () => {
     console.log(`application started on port === ${process.env.PORT}`)
