@@ -12,7 +12,7 @@ const authenticate = (req, res, next) => {
             req.token = token;
             next();
         })
-        .catch(() => res.status(401).end())
+        .catch(() => res.status(401).end('olololo, not allowed'))
 };
 
 module.exports = {authenticate};

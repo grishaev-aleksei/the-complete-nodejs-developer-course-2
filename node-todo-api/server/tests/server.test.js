@@ -26,6 +26,7 @@ describe('root', () => {
     describe('POST /todos', () => {
 
 
+
         it('should create a new todo', function (done) {
 
             const text = 'Test todo text';
@@ -33,18 +34,14 @@ describe('root', () => {
             request(app)
                 .post('/todos')
                 .send({text})
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(200)
-                .expect((res) => {
+                .end((err, res) => {
+                    if (err) return done(err);
                     assert.isOk(res.body);
                     assert.deepEqual(res.body.text, text);
-
-                })
-                .end((err) => {
-                    if (err) return done(err);
-
                     todo.find({text})
                         .then(todos => {
-                            assert.equal(todos.length, 1);
                             assert.deepEqual(todos[0].text, text);
                             done()
                         })
@@ -58,6 +55,7 @@ describe('root', () => {
             request(app)
                 .post('/todos')
                 .send({})
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(400)
                 .end((err) => {
                     if (err) return done(err);
@@ -79,11 +77,14 @@ describe('root', () => {
 
 
         it('should get all todos', function (done) {
+
+
             request(app)
                 .get('/todos')
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(200)
                 .expect((res) => {
-                    assert.equal(res.body.todos.length, 2)
+                    assert.equal(res.body.todos.length, 1)
                 })
                 .end(done)
 

@@ -12,12 +12,14 @@ const userTwoId = new ObjectID();
 
 const todos = [{
     _id: new ObjectID(),
-    text: 'First test todo'
+    text: 'First test todo',
+    _creator: userOneId
 }, {
     _id: new ObjectID(),
     text: 'Second test todo',
     completed: true,
-    completedAt: 333
+    completedAt: 333,
+    _creator: userTwoId
 }];
 
 const users = [{
@@ -43,7 +45,9 @@ const populateUsers = (done) => {
 
             return Promise.all([userOne, userTwo])
         })
-        .then(done())
+        .then((res) => {
+            done()
+        })
 };
 
 
@@ -53,7 +57,6 @@ const populateTodos = (done) => {
             return todo.insertMany(todos)
         }).then(done())
 };
-
 
 
 module.exports = {

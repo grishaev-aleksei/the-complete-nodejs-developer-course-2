@@ -14,8 +14,12 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.post('/todos', (req, res) => {
-    new todo(req.body)
+app.post('/todos', authenticate, (req, res) => {
+
+    new todo({
+        text: req.body.text,
+        _creator: req.user._id
+    })
         .save()
         .then(result => {
             res.status(200).json(result)
@@ -23,8 +27,10 @@ app.post('/todos', (req, res) => {
         .catch(err => res.status(400).send(err));
 });
 
-app.get('/todos', (req, res) => {
-    todo.find()
+app.get('/todos', authenticate, (req, res) => {
+    todo.find({
+        _creator: req.user._id
+    })
         .then((todos) => {
             res.send({todos})
         })
