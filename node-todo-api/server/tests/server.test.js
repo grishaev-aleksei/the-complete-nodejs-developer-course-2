@@ -98,6 +98,7 @@ describe('root', () => {
 
             request(app)
                 .get(`/todos/${todos[0]._id.toString()}`)
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(200)
                 .expect((res) => {
                     assert.equal(res.body.text, todos[0].text)
@@ -106,10 +107,22 @@ describe('root', () => {
 
         });
 
+        it('should not return todo, created by another user', function (done) {
+
+            request(app)
+                .get(`/todos/${todos[0]._id.toString()}`)
+                .set('x-auth', users[1].tokens[0].token)
+                .expect(404)
+                .end(done)
+        });
+
+
+
         it('should return 404 if todo not found', function (done) {
 
             request(app)
                 .get(`/todos/${new ObjectID().toString()}`)
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(404)
                 .end(done)
 
@@ -119,6 +132,7 @@ describe('root', () => {
 
             request(app)
                 .get(`/todos/${'some invalid ID'}`)
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(400)
                 .end(done)
         });
@@ -132,6 +146,7 @@ describe('root', () => {
 
             request(app)
                 .delete(`/todos/${todoID}`)
+                .set('x-auth', users[1].tokens[0].token)
                 .expect(200)
                 .expect(res => {
                     assert.equal(res.body.text, todos[1].text)
@@ -146,10 +161,29 @@ describe('root', () => {
                 })
         });
 
+        it('should not remove todo, created by another user', function (done) {
+
+            const todoID = todos[0]._id.toString();
+
+            request(app)
+                .delete(`/todos/${todoID}`)
+                .set('x-auth', users[1].tokens[0].token)
+                .expect(404)
+                .end((err) => {
+                    if (err) done(err);
+                    todo.findById(todoID)
+                        .then(todos => {
+                            assert.isNotNull(todos);
+                            done()
+                        })
+                })
+        });
+
         it('should return 404 if todo not found', function (done) {
 
             request(app)
                 .delete(`/todos/${new ObjectID()}`)
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(404)
                 .end(done)
 
@@ -159,6 +193,7 @@ describe('root', () => {
 
             request(app)
                 .delete(`/todos/${'looks like invalid ID'}`)
+                .set('x-auth', users[0].tokens[0].token)
                 .expect(400)
                 .end(done)
         });
@@ -176,6 +211,7 @@ describe('root', () => {
 
             request(app)
                 .patch(`/todos/${todoID}`)
+                .set('x-auth', users[0].tokens[0].token)
                 .send(data)
                 .expect(200)
                 .expect(res => {
@@ -195,6 +231,33 @@ describe('root', () => {
 
         });
 
+        it('should not update todo, created by another user', function (done) {
+            const todoID = todos[0]._id.toString();
+
+            const data = {
+                text: 'this is a new text',
+                completed: true
+            };
+
+            request(app)
+                .patch(`/todos/${todoID}`)
+                .set('x-auth', users[1].tokens[0].token)
+                .send(data)
+                .expect(404)
+                .end((err) => {
+                    if (err) return done(err);
+
+                    todo.findById(todoID)
+                        .then(todo => {
+                            assert.isNotOk(todo.completed);
+                            assert.isNull(todo.completedAt);
+                            done()
+                        })
+                        .catch(err => done(err))
+                })
+
+        });
+
         it('should clear completedAt when todo is not completed', function (done) {
             const todoID = todos[1]._id.toString();
 
@@ -204,6 +267,7 @@ describe('root', () => {
 
             request(app)
                 .patch(`/todos/${todoID}`)
+                .set('x-auth', users[1].tokens[0].token)
                 .send(data)
                 .expect(200)
                 .expect(res => {
@@ -324,7 +388,7 @@ describe('root', () => {
                     if (err) return done(err);
                     user.findById(users[1]._id)
                         .then(resUser => {
-                            assert.include(resUser.tokens[0], {
+                            assert.include(resUser.tokens[1], {
                                 access: 'auth',
                                 token: res.headers['x-auth']
                             });
@@ -351,7 +415,7 @@ describe('root', () => {
                     if (err) return done(err);
                     user.findById(users[1]._id)
                         .then(resUser => {
-                            assert.isUndefined(resUser.tokens[1]);
+                            assert.notEqual(resUser.tokens.length, 3);
                             done()
                         })
                         .catch(err => done(err))

@@ -37,12 +37,15 @@ app.get('/todos', authenticate, (req, res) => {
         .catch(err => res.status(400).json(err))
 });
 
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', authenticate, (req, res) => {
     const todoId = req.params.id;
     if (!ObjectID.isValid(todoId)) {
         return res.status(400).json({error: 'invalid ID'})
     }
-    todo.findById(todoId)
+    todo.findOne({
+        _id: todoId,
+        _creator: req.user._id
+    })
         .then(todo => {
             if (!todo) {
                 return res.status(404).json({error: 'todo not found'})
@@ -52,12 +55,15 @@ app.get('/todos/:id', (req, res) => {
         .catch(err => res.status(400).json(err))
 });
 
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
     const todoId = req.params.id;
     if (!ObjectID.isValid(todoId)) {
         return res.status(400).json({error: 'invalid ID'})
     }
-    todo.findByIdAndDelete(todoId)
+    todo.findOneAndDelete({
+        _id: todoId,
+        _creator: req.user._id
+    })
         .then(todo => {
             if (!todo) {
                 return res.status(404).json({error: 'todo not found'})
@@ -67,7 +73,7 @@ app.delete('/todos/:id', (req, res) => {
         .catch(err => res.status(400).json(err))
 });
 
-app.patch('/todos/:id', (req, res) => {
+app.patch('/todos/:id', authenticate, (req, res) => {
     const todoId = req.params.id;
     const body = _.pick(req.body, ['text', 'completed']);
 
@@ -82,7 +88,10 @@ app.patch('/todos/:id', (req, res) => {
         body.completedAt = null
     }
 
-    todo.findByIdAndUpdate(todoId, {
+    todo.findOneAndUpdate({
+        _id: todoId,
+        _creator: req.user._id
+    }, {
         $set: body
     }, {new: true})
         .then(todo => {
