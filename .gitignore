@@ -134,3 +134,4 @@ fabric.properties
 
 # Editor-based Rest Client
 .idea/httpRequests
+/node-todo-api/config/config.json

@@ -16,7 +16,7 @@ const users = [{
     password: 'userOnePass',
     tokens: [{
         access: 'auth',
-        token: jwt.sign({_id: userOneId.toString(), access: 'auth'}, 'abc123').toString()
+        token: jwt.sign({_id: userOneId.toString(), access: 'auth'}, process.env.JWT_SECRET).toString()
 
     }]
 }, {
